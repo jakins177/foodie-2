@@ -43,7 +43,13 @@ export default function Home() {
     setError(null);
 
     try {
-      const response = await fetch("/api/analyze", { method: "POST" });
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const response = await fetch("/api/analyze", {
+        method: "POST",
+        body: formData,
+      });
       if (!response.ok) {
         throw new Error("Failed to analyze image.");
       }
