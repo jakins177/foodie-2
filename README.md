@@ -1,4 +1,4 @@
-# NutriLens (Mock v1)
+# NutriLens (Vision v2)
 
 NutriLens is a modern, mobile-first Next.js web app inspired by the UX flow of AI-powered calorie and nutrition tracking products.
 
@@ -8,7 +8,7 @@ NutriLens is a modern, mobile-first Next.js web app inspired by the UX flow of A
 
 The app simulates a simple AI nutrition workflow:
 1. Upload a food photo.
-2. Run a mocked AI analysis.
+2. Run an OpenAI Vision analysis.
 3. View estimated calories + macros.
 4. Keep a lightweight session-based food history.
 
@@ -27,7 +27,7 @@ The app simulates a simple AI nutrition workflow:
 - Food history section with thumbnail + timestamp
 - Empty and error states for better UX
 - Mobile-first responsive layout with desktop polish
-- Local mock API route (`/api/analyze`) for fast iteration
+- OpenAI-backed API route (`/api/analyze`) for image nutrition estimation
 
 ## Tech stack
 
@@ -41,7 +41,7 @@ The app simulates a simple AI nutrition workflow:
 
 ```txt
 app/
-  api/analyze/route.ts      # mocked AI analysis endpoint
+  api/analyze/route.ts      # OpenAI vision analysis endpoint
   globals.css               # base styles + utility classes
   layout.tsx                # root layout
   page.tsx                  # app landing/dashboard flow
@@ -64,10 +64,16 @@ npm run dev
 
 Then open: `http://localhost:3000`
 
+Set environment variable before running analysis:
+
+```bash
+export OPENAI_API_KEY="your_api_key"
+```
+
 ## Debug logging notes
 
 - Client-side analysis failures are logged with `console.error("Analysis error", error)` in `app/page.tsx`.
-- The API endpoint randomly returns a small failure percentage to test real-world retry/error UX.
+- The API endpoint validates uploads and forwards image analysis requests to OpenAI Responses API.
 
 ## Future improvements
 
@@ -81,6 +87,6 @@ The structure is intentionally future-ready for:
 - Goals, meal summaries, and charts
 - Better analytics + telemetry
 
-## v1 limitation note
+## Notes
 
-The nutrition results are **mocked** and randomly selected from local sample data. No real image recognition or nutrition model is used yet.
+Nutrition estimates are generated from image understanding and can be inaccurate; verify critical dietary decisions with a professional.
