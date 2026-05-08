@@ -64,10 +64,11 @@ npm run dev
 
 Then open: `http://localhost:3000`
 
-Set environment variable before running analysis:
+Create a local env file before running analysis:
 
 ```bash
-export OPENAI_API_KEY="your_api_key"
+cp .env.example .env.local
+# then edit .env.local and set OPENAI_API_KEY
 ```
 
 ## Debug logging notes
