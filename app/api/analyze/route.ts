@@ -6,6 +6,24 @@ const MODEL = "gpt-4o-mini";
 
 type OpenAIResponse = {
   output_text?: string;
+  output?: Array<{
+    content?: Array<{
+      type?: string;
+      text?: string;
+    }>;
+  }>;
+};
+
+const getOutputText = (response: OpenAIResponse) => {
+  if (response.output_text) {
+    return response.output_text;
+  }
+
+  const textFromOutput = response.output
+    ?.flatMap((item) => item.content ?? [])
+    .find((content) => content.type === "output_text" && typeof content.text === "string")?.text;
+
+  return textFromOutput;
 };
 
 const parseAnalysisJson = (raw: string) => {
@@ -79,7 +97,7 @@ export async function POST(request: Request) {
     }
 
     const responseJson = (await openAiRes.json()) as OpenAIResponse;
-    const outputText = responseJson.output_text;
+    const outputText = getOutputText(responseJson);
 
     if (!outputText) {
       return NextResponse.json({ error: "No analysis returned from model." }, { status: 502 });

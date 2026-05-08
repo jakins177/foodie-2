@@ -51,7 +51,17 @@ export default function Home() {
         body: formData,
       });
       if (!response.ok) {
-        throw new Error("Failed to analyze image.");
+        let message = "Failed to analyze image.";
+        try {
+          const errorPayload = (await response.json()) as { error?: string };
+          if (errorPayload.error) {
+            message = errorPayload.error;
+          }
+        } catch {
+          // Ignore JSON parsing errors and use fallback message.
+        }
+
+        throw new Error(message);
       }
 
       const payload: { data: AnalysisResult } = await response.json();
@@ -66,7 +76,8 @@ export default function Home() {
       ]);
     } catch (analysisError) {
       console.error("Analysis error", analysisError);
-      setError("We couldn't process this image right now. Please try again.");
+      const message = analysisError instanceof Error ? analysisError.message : "We couldn't process this image right now. Please try again.";
+      setError(message);
     } finally {
       setLoading(false);
     }
