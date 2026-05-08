@@ -2,10 +2,24 @@ import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import type { AnalysisResult } from "@/lib/types";
 
-const MODEL = "gpt-4.1-mini";
+const MODEL = "gpt-4o-mini";
 
 type OpenAIResponse = {
   output_text?: string;
+};
+
+const parseAnalysisJson = (raw: string) => {
+  const fencedMatch = raw.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+  const candidate = fencedMatch?.[1] ?? raw;
+  return JSON.parse(candidate) as {
+    foodName: string;
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+    confidence: number;
+    notes: string;
+  };
 };
 
 export async function POST(request: Request) {
@@ -71,15 +85,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "No analysis returned from model." }, { status: 502 });
     }
 
-    const parsed = JSON.parse(outputText) as {
-      foodName: string;
-      calories: number;
-      protein: number;
-      carbs: number;
-      fat: number;
-      confidence: number;
-      notes: string;
-    };
+    const parsed = parseAnalysisJson(outputText);
 
     const data: AnalysisResult = {
       id: randomUUID(),
